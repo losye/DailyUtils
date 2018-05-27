@@ -1,3 +1,4 @@
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
@@ -8,6 +9,22 @@ import kotlinx.coroutines.experimental.runBlocking
  * @Date: 2018/5/21 上午9:54
  */
 fun main(args: Array<String>) {
+    launch {
+        val async1 = async { requestDataAsync1() }
+        val async2 = async { requestDataAsync2() }
+        println("data1=${async1.await()}, data2=${async2.await()}")
+    }
+    Thread.sleep(10000)
+}
+
+suspend fun requestDataAsync1(): String {
+    delay(1000)
+    return "data1"
+}
+
+suspend fun requestDataAsync2(): String {
+    delay(1000)
+    return "data2"
 }
 
 fun suspendPrint() {

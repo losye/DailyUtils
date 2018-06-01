@@ -2,6 +2,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
+import kotlin.system.measureTimeMillis
 
 /**
  * @Author: zhengye.zhang
@@ -9,12 +10,14 @@ import kotlinx.coroutines.experimental.runBlocking
  * @Date: 2018/5/21 上午9:54
  */
 fun main(args: Array<String>) {
-    launch {
+    /*launch {
         val async1 = async { requestDataAsync1() }
         val async2 = async { requestDataAsync2() }
         println("data1=${async1.await()}, data2=${async2.await()}")
     }
-    Thread.sleep(10000)
+    Thread.sleep(10000)*/
+
+    cor6()
 }
 
 suspend fun requestDataAsync1(): String {
@@ -130,5 +133,33 @@ fun cor5() = runBlocking {
             print(".")
         }
     }
+
     jobs.forEach { it.join() } // wait for all jobs to complete
 }
+
+suspend fun doSomethingUsefulOne(): Int {
+    delay(1000L) // pretend we are doing something useful here
+    return 13
+}
+
+suspend fun doSomethingUsefulTwo(): Int {
+    delay(1000L) // pretend we are doing something useful here, too
+    return 29
+}
+
+fun cor6() = runBlocking<Unit> {
+    val time = measureTimeMillis {
+        //sequentially
+        /*val one = doSomethingUsefulOne()
+        val two = doSomethingUsefulTwo()
+        println("The answer is ${one + two}")*/
+
+        //async
+        val one = async { doSomethingUsefulOne() }
+        val two = async { doSomethingUsefulTwo() }
+        println("The answer is ${one.await() + two.await()}")
+    }
+    println("Completed in $time ms")
+}
+
+

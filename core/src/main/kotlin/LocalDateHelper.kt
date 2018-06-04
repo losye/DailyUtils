@@ -530,7 +530,3 @@ object LocalDateHelper{
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
     }
 }
-
-fun main(args: Array<String>) {
-
-}

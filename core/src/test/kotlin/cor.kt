@@ -147,6 +147,15 @@ suspend fun doSomethingUsefulTwo(): Int {
     return 29
 }
 
+/**
+ * Conceptually, async is just like launch.
+ * It starts a separate coroutine which is a light-weight thread that works concurrently
+ * with all the other coroutines. The difference is that launch returns a Job
+ * and does not carry any resulting value, while async returns a Deferred --
+ * a light-weight non-blocking future that represents a promise to provide a result later.
+ * You can use .await() on a deferred value to get its eventual result,
+ * but Deferred is also a Job, so you can cancel it if needed.
+ */
 fun cor6() = runBlocking<Unit> {
     val time = measureTimeMillis {
         //sequentially
@@ -157,6 +166,9 @@ fun cor6() = runBlocking<Unit> {
         //async
         val one = async { doSomethingUsefulOne() }
         val two = async { doSomethingUsefulTwo() }
+
+        val launch = launch { doSomethingUsefulOne() }
+
         println("The answer is ${one.await() + two.await()}")
     }
     println("Completed in $time ms")

@@ -1,4 +1,5 @@
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
@@ -17,8 +18,12 @@ fun main(args: Array<String>) {
     }
     Thread.sleep(10000)*/
 
-    cor6()
+//    cor6()
+//    cor7()
+    chan1()
 }
+
+data class foo(var a:Int)
 
 suspend fun requestDataAsync1(): String {
     delay(1000)
@@ -147,6 +152,14 @@ suspend fun doSomethingUsefulTwo(): Int {
     return 29
 }
 
+fun somethingUsefulOneAsync() = async {
+    doSomethingUsefulOne()
+}
+
+fun somethingUsefulTwoAsync() = async {
+    doSomethingUsefulTwo()
+}
+
 /**
  * Conceptually, async is just like launch.
  * It starts a separate coroutine which is a light-weight thread that works concurrently
@@ -167,11 +180,35 @@ fun cor6() = runBlocking<Unit> {
         val one = async { doSomethingUsefulOne() }
         val two = async { doSomethingUsefulTwo() }
 
-        val launch = launch { doSomethingUsefulOne() }
-
         println("The answer is ${one.await() + two.await()}")
     }
     println("Completed in $time ms")
 }
+
+fun cor7(){
+    val time = measureTimeMillis {
+        // we can initiate async actions outside of a coroutine
+        val one = somethingUsefulOneAsync()
+        val two = somethingUsefulTwoAsync()
+        // but waiting for a result must involve either suspending or blocking.
+        // here we use `runBlocking { ... }` to block the main thread while waiting for the result
+        runBlocking {
+            println("The answer is ${one.await() + two.await()}")
+        }
+    }
+    println("Completed in $time ms")
+}
+
+fun chan1() = runBlocking {
+    val channel = Channel<Int>()
+    launch {
+        // this might be heavy CPU-consuming computation or async logic, we'll just send five squares
+        for (x in 1..5) channel.send(x * x)
+    }
+    // here we print five received integers:
+    repeat(5) { println(channel.receive()) }
+    println("Done!")
+}
+
 
 

@@ -12,7 +12,9 @@ import java.util.Objects;
  * @Description:
  * @Date: 2018/5/16 下午2:41
  */
-public class LocalDateHelper {
+public final class LocalDateHelper {
+
+    private LocalDateHelper(){}
 
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 

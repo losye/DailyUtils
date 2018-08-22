@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * @author modong
  * @date 2018/8/22 下午5:09
+ * the LRU cache
  */
 public class LRUCache<K, V> {
     /**
